@@ -11,6 +11,8 @@ namespace HealthCare_API.Extensions
         {
             services.AddScoped<IPatientService, PatientService>();
             services.AddScoped<IPatientRepository, PatientRepository>();
+            services.AddScoped<IDoctorService, DoctorService>();
+            services.AddScoped<IDoctorRepository, DoctorRepository>();
         }
     }
 }
