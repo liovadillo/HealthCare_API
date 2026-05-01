@@ -1,0 +1,13 @@
+﻿using HealthCare_API.Entities;
+using Microsoft.EntityFrameworkCore;
+
+namespace HealthCare_API.Data
+{
+    public class HealthCareDbContext : DbContext
+    {
+        public HealthCareDbContext(DbContextOptions<HealthCareDbContext> options) : base(options) { }
+
+        public DbSet<Patient> Patients { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
+    }
+}

@@ -1,0 +1,10 @@
+﻿namespace HealthCare_API.DTOs.Patient
+{
+    public class CreatePatientDTO
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string Diagnosis { get; set; }
+        public bool IsActive { get; set; }
+    }
+}
