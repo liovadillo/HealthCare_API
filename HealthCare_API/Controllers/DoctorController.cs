@@ -28,9 +28,6 @@ namespace HealthCare_API.Controllers
         public async Task<ActionResult<DoctorDTO>> GetById([FromRoute] int id)
         {
             var doctor = await _doctorService.GetByIdAsync(id);
-            if (doctor == null)
-                return NotFound();
-
             return Ok(doctor);
 
         }
@@ -39,7 +36,6 @@ namespace HealthCare_API.Controllers
         public async Task<ActionResult<DoctorDTO>> InsertDoctor([FromBody] CreateDoctorDTO dto)
         {
             var doctor = await _doctorService.InsertAsync(dto);
-
             return CreatedAtAction(nameof(GetById), new { id = doctor.Id }, doctor);
 
         }
@@ -47,11 +43,7 @@ namespace HealthCare_API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<DoctorDTO>> UpdateDoctor([FromRoute] int id, [FromBody] UpdateDoctorDTO dto)
         {
-
             var doctor = await _doctorService.UpdateAsync(id, dto);
-            if (doctor == null)
-                return NotFound();
-
             return Ok(doctor);
         }
 
@@ -59,9 +51,6 @@ namespace HealthCare_API.Controllers
         public async Task<ActionResult> DeleteDoctor([FromRoute] int id)
         {
             var wasDeleted = await _doctorService.DeleteAsync(id);
-            if (!wasDeleted)
-                return NotFound();
-
             return NoContent();
 
         }

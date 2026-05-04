@@ -3,6 +3,7 @@ using HealthCare_API.Data;
 using HealthCare_API.Mappings;
 using HealthCare_API.Extensions;
 using Microsoft.EntityFrameworkCore;
+using HealthCare_API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
