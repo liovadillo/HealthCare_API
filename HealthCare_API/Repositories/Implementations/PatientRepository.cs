@@ -30,8 +30,9 @@ namespace HealthCare_API.Repositories.Implementations
             return patient;
         }
 
-        public async Task<Patient?> UpdateAsync(int id, Patient patient)
+        public async Task<Patient?> UpdateAsync(Patient patient)
         {
+            _context.Patients.Update(patient);
             await _context.SaveChangesAsync();
 
             return patient;

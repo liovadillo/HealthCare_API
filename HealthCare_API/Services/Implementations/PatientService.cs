@@ -65,7 +65,7 @@ namespace HealthCare_API.Services.Implementations
 
             _mapper.Map(dto, patient);
 
-            patient = await _repository.UpdateAsync(id, patient);
+            await _repository.UpdateAsync(patient);
 
             return _mapper.Map<PatientDTO>(patient);
         }
