@@ -22,11 +22,11 @@ namespace HealthCare_API.Services.Implementations
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var wasDeleted =  await _repository.DeleteAsync(id);
-            if(!wasDeleted)
-                throw new NotFoundException($"Patient ID: {id} not found.");
+            var patient = await GetPatientOrThrowAsync(id);
 
-            return wasDeleted;
+            await _repository.DeleteAsync(patient);
+
+            return true;
 
         }
 
@@ -38,9 +38,7 @@ namespace HealthCare_API.Services.Implementations
 
         public async Task<PatientDTO?> GetByIdAsync(int id)
         {
-            var patient = await _repository.GetByIdAsync(id);
-            if(patient == null)
-                throw new NotFoundException($"Patient ID: {id} not found.");
+            var patient = await GetPatientOrThrowAsync(id);
 
             return _mapper.Map<PatientDTO>(patient);
         }
@@ -59,15 +57,22 @@ namespace HealthCare_API.Services.Implementations
 
         public async Task<PatientDTO?> UpdateAsync(int id, UpdatePatientDTO dto)
         {
-            var patient = await _repository.GetByIdAsync(id);
-            if (patient == null)
-                throw new NotFoundException($"Patient ID: {id} not found.");
+            var patient = await GetPatientOrThrowAsync(id);
 
             _mapper.Map(dto, patient);
 
             await _repository.UpdateAsync(patient);
 
             return _mapper.Map<PatientDTO>(patient);
+        }
+
+        private async Task<Patient> GetPatientOrThrowAsync(int id)
+        {
+            var patient = await _repository.GetByIdAsync(id);
+            if (patient == null)
+                throw new NotFoundException($"Patient ID: {id} not found.");
+
+            return patient;
         }
     }
 }

@@ -38,14 +38,10 @@ namespace HealthCare_API.Repositories.Implementations
             return patient;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(Patient patient)
         {
-            var patient = await _context.Patients.FirstOrDefaultAsync(p => p.Id == id);
-            if (patient == null) return false;
-
             _context.Patients.Remove(patient);
             await _context.SaveChangesAsync();
-            return true;
         }
     }
 }

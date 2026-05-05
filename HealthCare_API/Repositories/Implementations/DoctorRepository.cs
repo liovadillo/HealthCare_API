@@ -13,16 +13,10 @@ namespace HealthCare_API.Repositories.Implementations
             _dbContext = dbContext;
         
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task DeleteAsync(Doctor doctor)
         {
-            var doctor = await _dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id);
-            if (doctor == null)
-                return false;
-
             _dbContext.Doctors.Remove(doctor);
             await _dbContext.SaveChangesAsync();
-
-            return true;
         }
 
         public async Task<IEnumerable<Doctor>> GetAllAsync()
@@ -44,20 +38,13 @@ namespace HealthCare_API.Repositories.Implementations
             return doctor;
         }
 
-        public async Task<Doctor?> UpdateAsync(int id, Doctor doctor)
+        public async Task<Doctor?> UpdateAsync(Doctor doctor)
         {
-            var existing = await _dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id);
-            if (existing == null)
-                return null;
 
-            existing.Name = doctor.Name;
-            existing.Specialty = doctor.Specialty;
-            existing.YearsOfExperience = doctor.YearsOfExperience;
-            existing.IsAvailable = doctor.IsAvailable;
-
+            _dbContext.Doctors.Update(doctor);
             await _dbContext.SaveChangesAsync();
 
-            return existing;
+            return doctor;
         }
     }
 }
