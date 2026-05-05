@@ -32,16 +32,9 @@ namespace HealthCare_API.Repositories.Implementations
 
         public async Task<Patient?> UpdateAsync(int id, Patient patient)
         {
-            var existing = await _context.Patients.FirstOrDefaultAsync(p => p.Id == id);
-            if (existing == null) return null;
-
-            existing.Name = patient.Name;
-            existing.Age = patient.Age;
-            existing.Diagnosis = patient.Diagnosis;
-            existing.IsActive = patient.IsActive;
-
             await _context.SaveChangesAsync();
-            return existing;
+
+            return patient;
         }
 
         public async Task<bool> DeleteAsync(int id)

@@ -59,10 +59,13 @@ namespace HealthCare_API.Services.Implementations
 
         public async Task<PatientDTO?> UpdateAsync(int id, UpdatePatientDTO dto)
         {
-            var patient = await _repository.UpdateAsync(id, _mapper.Map<Patient>(dto));
-
+            var patient = await _repository.GetByIdAsync(id);
             if (patient == null)
                 throw new NotFoundException($"Patient ID: {id} not found.");
+
+            _mapper.Map(dto, patient);
+
+            patient = await _repository.UpdateAsync(id, patient);
 
             return _mapper.Map<PatientDTO>(patient);
         }
