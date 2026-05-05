@@ -23,11 +23,19 @@ builder.Services.AddDbContext<HealthCareDbContext>(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//Auto migrations
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
+    var db = scope.ServiceProvider.GetRequiredService<HealthCareDbContext>();
+    db.Database.Migrate();
+
 }
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi();
+    }
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
