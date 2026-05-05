@@ -4,6 +4,7 @@ using HealthCare_API.Entities;
 using HealthCare_API.Exceptions;
 using HealthCare_API.Repositories.Interfaces;
 using HealthCare_API.Services.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace HealthCare_API.Services.Implementations
 {
@@ -20,11 +21,11 @@ namespace HealthCare_API.Services.Implementations
         
         public async Task<bool> DeleteAsync(int id)
         {
-            var wasDeleted = await _repository.DeleteAsync(id);
-            if(!wasDeleted)
-                throw new NotFoundException($"Doctor ID: {id} not found.");
+            var doctor = await GetDoctorOrThrowAsync(id);
 
-            return wasDeleted;
+            await _repository.DeleteAsync(doctor);
+
+            return true;
 
         }
 
@@ -36,9 +37,7 @@ namespace HealthCare_API.Services.Implementations
 
         public async Task<DoctorDTO?> GetByIdAsync(int id)
         {
-            var doctor = await _repository.GetByIdAsync(id);
-            if (doctor == null)
-                throw new NotFoundException($"Doctor ID: {id} not found.");
+            var doctor = await GetDoctorOrThrowAsync(id);
 
             return _mapper.Map<DoctorDTO>(doctor);
         }
@@ -59,13 +58,22 @@ namespace HealthCare_API.Services.Implementations
         }
 
         public async Task<DoctorDTO?> UpdateAsync(int id, UpdateDoctorDTO dto)
-        {                    
-            var doctor = await _repository.UpdateAsync(id, _mapper.Map<Doctor>(dto));
+        {
+            var doctor = await GetDoctorOrThrowAsync(id);
+            _mapper.Map(dto, doctor);
 
+            await _repository.UpdateAsync(doctor);
+
+            return _mapper.Map<DoctorDTO>(doctor);
+        }
+
+        private async Task<Doctor> GetDoctorOrThrowAsync(int id)
+        {
+            var doctor = await _repository.GetByIdAsync(id);
             if (doctor == null)
                 throw new NotFoundException($"Doctor ID: {id} not found.");
 
-            return _mapper.Map<DoctorDTO>(doctor);
+            return doctor;
         }
     }
 }

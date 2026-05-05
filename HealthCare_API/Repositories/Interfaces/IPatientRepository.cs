@@ -8,6 +8,6 @@ namespace HealthCare_API.Repositories.Interfaces
         Task<Patient?> GetByIdAsync(int id);
         Task<Patient> InsertAsync(Patient patient);
         Task<Patient?> UpdateAsync(Patient patient);
-        Task<bool> DeleteAsync(int id);
+        Task DeleteAsync(Patient patient);
     }
 }
