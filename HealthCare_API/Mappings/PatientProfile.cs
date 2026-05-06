@@ -9,6 +9,7 @@ namespace HealthCare_API.Mappings
         public PatientProfile()
         {
             CreateMap<Patient, PatientDTO>();
+            CreateMap<Patient, PatientSummaryDTO>();
             CreateMap<CreatePatientDTO, Patient>();
             CreateMap<UpdatePatientDTO, Patient>();
         }
