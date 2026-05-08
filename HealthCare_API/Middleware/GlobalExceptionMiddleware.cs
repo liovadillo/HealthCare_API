@@ -31,8 +31,17 @@ namespace HealthCare_API.Middleware
                 });
 
             }
-            catch(Exception ex) { 
-            
+            catch(Exception ex) {
+                context.Response.StatusCode = 500;
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    statusCode = 500,
+                    message = "Internal Server Error",
+                    detail = ex.Message
+                });
+
             }
 
 
