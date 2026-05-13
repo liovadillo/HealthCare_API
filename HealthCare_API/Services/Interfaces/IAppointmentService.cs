@@ -1,5 +1,6 @@
 ﻿using HealthCare_API.DTOs.Appointment;
 using HealthCare_API.Entities;
+using HealthCare_API.Enums;
 
 namespace HealthCare_API.Services.Interfaces
 {
@@ -10,7 +11,8 @@ namespace HealthCare_API.Services.Interfaces
         Task<IEnumerable<AppointmentDTO>> GetAllAsync();
         Task<IEnumerable<AppointmentDTO>> GetByDoctorAsync(int doctorId);
         Task<IEnumerable<AppointmentDTO>> GetByPatientAsync(int patientId);
-        Task<AppointmentDetailDTO> UpdateAsync(int id, AppointmentDTO dto);
+        Task<AppointmentDetailDTO> UpdateAsync(int id, UpdateAppointmentDTO dto);
         Task<bool> DeleteAsync(int id);
+        Task<AppointmentDetailDTO> UpdateStatusAsync(int id, AppointmentStatus status);
     }
 }

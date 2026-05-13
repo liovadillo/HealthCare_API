@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HealthCare_API.DTOs.Appointment;
 using HealthCare_API.Entities;
+using HealthCare_API.Enums;
 using HealthCare_API.Exceptions;
 using HealthCare_API.Repositories.Interfaces;
 using HealthCare_API.Services.Interfaces;
@@ -22,6 +23,18 @@ namespace HealthCare_API.Services.Implementations
             _patientRepository = patientRepository;
         }
                 
+        public async Task<AppointmentDetailDTO> UpdateStatusAsync(int id, AppointmentStatus status)
+        {
+            var appointment = await GetAppointmentOrThrowAsync(id);
+            ValidateStatusTransition(appointment.Status, status);
+
+            appointment.Status = status;
+
+            await _repository.UpdateAsync(appointment);
+
+            return await GetAppointmentDetailsAsync(appointment.Id);
+        }
+        
         public async Task<bool> DeleteAsync(int id)
         {
             var appointment = await GetAppointmentOrThrowAsync(id);
@@ -63,7 +76,9 @@ namespace HealthCare_API.Services.Implementations
         public async Task<AppointmentDetailDTO> InsertAsync(CreateAppointmentDTO dto)
         {
             await ValidateEntitiesExistAsync(dto.DoctorId, dto.PatientId);
-            await ValidateAppointmentOverlapAsync(dto.DoctorId, dto.PatientId, dto.StartTime, dto.EndTime);           
+            await ValidateAppointmentOverlapAsync(dto.DoctorId, dto.PatientId, dto.StartTime, dto.EndTime);
+
+            dto.Status = Enums.AppointmentStatus.Scheduled;
 
             var appointment = await _repository.InsertAsync(_mapper.Map<Appointment>(dto));
 
@@ -71,7 +86,7 @@ namespace HealthCare_API.Services.Implementations
 
         }
 
-        public async Task<AppointmentDetailDTO> UpdateAsync(int id, AppointmentDTO dto)
+        public async Task<AppointmentDetailDTO> UpdateAsync(int id, UpdateAppointmentDTO dto)
         {
             var appointment = await GetAppointmentOrThrowAsync(id);
             await ValidateEntitiesExistAsync(dto.DoctorId, dto.PatientId);
@@ -119,7 +134,9 @@ namespace HealthCare_API.Services.Implementations
             var doctorHasOverlap = await _repository.ExistAsync(a =>
             a.DoctorId == doctorId &&
             a.StartTime < endTime &&
-            a.EndTime > startTime);
+            a.EndTime > startTime &&
+            (a.Status == Enums.AppointmentStatus.Confirmed ||
+            a.Status == Enums.AppointmentStatus.Scheduled));
 
             if (doctorHasOverlap)
                 throw new BadRequestException("Doctor already has an appointment in that time slot.");
@@ -127,7 +144,9 @@ namespace HealthCare_API.Services.Implementations
             var patientHasOverlap = await _repository.ExistAsync(a =>
             a.PatientId == patientId &&
             a.StartTime < endTime &&
-            a.EndTime > startTime);
+            a.EndTime > startTime &&
+            (a.Status == Enums.AppointmentStatus.Confirmed ||
+            a.Status == Enums.AppointmentStatus.Scheduled));
 
             if (patientHasOverlap)
                 throw new BadRequestException("Patient already has an appointment in that time slot.");
@@ -140,5 +159,23 @@ namespace HealthCare_API.Services.Implementations
 
             return _mapper.Map<AppointmentDetailDTO>(appointment);
         }
+
+        private void ValidateStatusTransition(AppointmentStatus current, AppointmentStatus next)
+        {
+            var validTransitions = new Dictionary<AppointmentStatus, List<AppointmentStatus>>
+            {
+                { AppointmentStatus.Scheduled, new List<AppointmentStatus> { AppointmentStatus.Confirmed, AppointmentStatus.Cancelled } },
+                { AppointmentStatus.Confirmed, new List<AppointmentStatus> { AppointmentStatus.Completed, AppointmentStatus.Cancelled } },
+                { AppointmentStatus.Completed, new List<AppointmentStatus>() }, // cannot change
+                { AppointmentStatus.Cancelled, new List<AppointmentStatus>() }  //cannot change
+            };
+
+            if (!validTransitions[current].Contains(next))
+                throw new BadRequestException($"Cannot transition from {current} to {next}.");
+
+        }
+
+
+
     }
 }
