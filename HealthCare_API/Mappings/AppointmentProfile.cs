@@ -10,9 +10,11 @@ namespace HealthCare_API.Mappings
             CreateMap<Appointment, AppointmentDTO>()
                 .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.Name))
                 .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient.Name));
+
             CreateMap<Appointment , AppointmentDetailDTO>()
                 .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.Doctor))
                 .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.Patient));
+
             CreateMap<CreateAppointmentDTO, Appointment>();
         }
     }
