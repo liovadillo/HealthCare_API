@@ -10,7 +10,7 @@ namespace HealthCare_API.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
-        
+
         public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
@@ -34,6 +34,65 @@ namespace HealthCare_API.Controllers
             return Ok(appointment);
 
         }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<AppointmentDTO>>> GetAll()
+        {
+            var appointments = await _appointmentService.GetAllAsync();
+
+            return Ok(appointments);
+        }
+
+        [HttpGet("doctor/{id}")]
+        public async Task<ActionResult<IEnumerable<AppointmentDTO>>> GetAllByDoctor([FromRoute] int id)
+        {
+            var appointments = await _appointmentService.GetByDoctorAsync(id);
+            return Ok(appointments);
+        }
+
+        [HttpGet("patient/{id}")]
+        public async Task<ActionResult<IEnumerable<AppointmentDTO>>> GetAllByPatient([FromRoute] int id)
+        {
+            var appointments = await _appointmentService.GetByPatientAsync(id);
+            return Ok(appointments);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AppointmentDetailDTO>> UpdateAppointment([FromRoute] int id,[FromBody] UpdateAppointmentDTO dto)
+        {
+            var appointment = await _appointmentService.UpdateAsync(id, dto);
+            
+            return Ok(appointment);
+        }
+
+        [HttpPost("{id}/cancel")]
+        public async Task<ActionResult<AppointmentDetailDTO>> CancelAppointment([FromRoute] int id)
+        {                       
+            var appointment = await _appointmentService.UpdateStatusAsync(id, Enums.AppointmentStatus.Cancelled);
+
+            return Ok(appointment);
+
+        }
+
+        [HttpPost("{id}/complete")]
+        public async Task<ActionResult<AppointmentDetailDTO>> CompleteAppointment([FromRoute] int id)
+        {
+            var appointment = await _appointmentService.UpdateStatusAsync(id, Enums.AppointmentStatus.Completed);
+
+            return Ok(appointment);
+
+        }
+
+        [HttpPost("{id}/confirm")]
+        public async Task<ActionResult<AppointmentDetailDTO>> ConfirmAppointment([FromRoute] int id)
+        {
+            var appointment = await _appointmentService.UpdateStatusAsync(id, Enums.AppointmentStatus.Confirmed);
+
+            return Ok(appointment);
+
+        }
+
+
 
     }
 }
