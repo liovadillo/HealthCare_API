@@ -47,7 +47,9 @@ namespace HealthCare_API.Services.Implementations
         {
             var appointments = await _repository.GetAllAsync();
 
-            return _mapper.Map<IEnumerable<AppointmentDTO>>(appointments);
+            var dto = _mapper.Map<IEnumerable<AppointmentDTO>>(appointments);
+
+            return dto;
         }
 
         public async Task<IEnumerable<AppointmentDTO>> GetByDoctorAsync(int doctorId)
