@@ -29,7 +29,10 @@ namespace HealthCare_API.Repositories.Implementations
 
         public async Task<IEnumerable<Appointment>> GetAllAsync()
         {
-            return await _context.Appointments.ToListAsync();
+            return await _context.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Appointment>> GetByDoctorAsync(int doctorId)
