@@ -16,5 +16,10 @@ namespace HealthCare_API.Entities
         public DateTime EndTime { get; set; }
 
         public AppointmentStatus Status { get; set; }
+
+        public DateTime CreatedDate { get; set; }
+
+        public DateTime LastUpdatedDate { get; set; }
+
     }
 }
