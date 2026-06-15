@@ -27,6 +27,8 @@ namespace HealthCare_API.Repositories.Implementations
         public async Task<Doctor?> GetByIdAsync(int id)
         {
             return await _dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id);
+
+            
              
         }
 

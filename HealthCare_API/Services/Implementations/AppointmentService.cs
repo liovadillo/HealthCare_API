@@ -82,7 +82,12 @@ namespace HealthCare_API.Services.Implementations
 
             dto.Status = Enums.AppointmentStatus.Scheduled;
 
-            var appointment = await _repository.InsertAsync(_mapper.Map<Appointment>(dto));
+            var appointmentEntity = _mapper.Map<Appointment>(dto);
+            appointmentEntity.CreatedDate = DateTime.Now;
+            appointmentEntity.LastUpdatedDate = DateTime.Now;
+
+
+            var appointment = await _repository.InsertAsync(appointmentEntity);
 
             return await GetAppointmentDetailsAsync(appointment.Id);
 
@@ -94,7 +99,9 @@ namespace HealthCare_API.Services.Implementations
             await ValidateEntitiesExistAsync(dto.DoctorId, dto.PatientId);
             await ValidateAppointmentOverlapAsync(dto.DoctorId, dto.PatientId, dto.StartTime, dto.EndTime);
 
-            _mapper.Map(dto, appointment);
+           _mapper.Map(dto, appointment);
+
+            appointment.LastUpdatedDate = DateTime.Now;
 
             await _repository.UpdateAsync(appointment);
 

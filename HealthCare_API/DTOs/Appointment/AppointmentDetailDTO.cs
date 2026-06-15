@@ -12,5 +12,7 @@ namespace HealthCare_API.DTOs.Appointment
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public AppointmentStatus Status { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? LastUpdatedDate { get; set; }
     }
 }
