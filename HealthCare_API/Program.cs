@@ -21,6 +21,17 @@ builder.Services.AddAppServices();
 builder.Services.AddDbContext<HealthCareDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 var app = builder.Build();
 
 //Auto migrations
@@ -38,6 +49,8 @@ using (var scope = app.Services.CreateScope())
     }
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
+
+app.UseCors("AllowAngular");
 
 app.UseHttpsRedirection();
 
