@@ -43,5 +43,10 @@ namespace HealthCare_API.Repositories.Implementations
             _context.Patients.Remove(patient);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Patient>> GetAllActiveAsync()
+        {
+            return await _context.Patients.Where(p => p.IsActive).ToListAsync();            
+        }
     }
 }
