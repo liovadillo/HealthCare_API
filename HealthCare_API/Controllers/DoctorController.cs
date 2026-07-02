@@ -24,6 +24,14 @@ namespace HealthCare_API.Controllers
 
         }
 
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<DoctorDTO>>> GetAllActive()
+        {
+            var doctors = await _doctorService.GetAllActiveAsync();
+            return Ok(doctors);
+
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<DoctorDTO>> GetById([FromRoute] int id)
         {
