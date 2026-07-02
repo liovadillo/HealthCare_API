@@ -30,6 +30,12 @@ namespace HealthCare_API.Services.Implementations
 
         }
 
+        public async Task<IEnumerable<PatientDTO>> GetAllActiveAsync()
+        {
+            var patients = await _repository.GetAllActiveAsync();
+            return _mapper.Map<IEnumerable<PatientDTO>>(patients);
+        }
+
         public async Task<IEnumerable<PatientDTO>> GetAllAsync()
         {
             var patients = await _repository.GetAllAsync();
