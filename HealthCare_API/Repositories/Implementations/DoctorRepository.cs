@@ -19,6 +19,11 @@ namespace HealthCare_API.Repositories.Implementations
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<IEnumerable<Doctor>> GetAllActiveAsync()
+        {
+            return await _dbContext.Doctors.Where(d => d.IsAvailable).ToListAsync();
+        }
+
         public async Task<IEnumerable<Doctor>> GetAllAsync()
         {
             return await _dbContext.Doctors.ToListAsync();            
@@ -26,10 +31,7 @@ namespace HealthCare_API.Repositories.Implementations
 
         public async Task<Doctor?> GetByIdAsync(int id)
         {
-            return await _dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id);
-
-            
-             
+            return await _dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id);                         
         }
 
         public async Task<Doctor> InsertAsync(Doctor doctor)

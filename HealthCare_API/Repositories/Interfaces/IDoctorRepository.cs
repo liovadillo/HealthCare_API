@@ -9,5 +9,8 @@ namespace HealthCare_API.Repositories.Interfaces
         Task<Doctor> InsertAsync(Doctor doctor);
         Task<Doctor?> UpdateAsync(Doctor doctor);
         Task DeleteAsync(Doctor doctor);
+        Task<IEnumerable<Doctor>> GetAllActiveAsync();
+
+
     }
 }
