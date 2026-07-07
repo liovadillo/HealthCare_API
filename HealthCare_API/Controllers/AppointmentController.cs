@@ -92,7 +92,12 @@ namespace HealthCare_API.Controllers
 
         }
 
-
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteAppointment([FromRoute] int id)
+        {
+            var wasDeleted = await _appointmentService.DeleteAsync(id);
+            return NoContent();
+        }
 
     }
 }
