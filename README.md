@@ -1,138 +1,125 @@
-# Healthcare Client Angular
+# HealthCare REST API
 
-Frontend SPA built with Angular 22 for managing healthcare appointments, doctors, and patients. Connects to the [Healthcare REST API](https://github.com/liovadillo/healthcare-api) built with .NET.
+A RESTful API built with ASP.NET Core for managing healthcare appointments, doctors, and patients.
 
 ## Tech Stack
 
-- **Angular 22**
-- **Node.js v24**
-- **TypeScript**
-- **Bulma CSS**
-- **RxJS**
-
-## Features
-
-### Appointments
-- List all appointments with status indicator (🟡 Scheduled, 🔵 Confirmed, 🟢 Completed, 🔴 Cancelled)
-- View appointment detail
-- Create new appointment with doctor and patient selection
-- Edit existing appointment
-- Delete appointment with confirmation modal
-- Status flow management — Confirm, Complete, Cancel with validation
-
-### Doctors
-- List all doctors
-- View doctor detail
-- Create / Edit / Delete doctor
-
-### Patients
-- List all patients
-- View patient detail
-- Create / Edit / Delete patient
+- **Framework:** ASP.NET Core (.NET 8)
+- **ORM:** Entity Framework Core
+- **Database:** SQL Server
+- **Mapping:** AutoMapper
+- **Testing:** NUnit + Moq
+- **CI/CD:** GitHub Actions
+- **Cloud:** Azure App Service
 
 ## Architecture
 
-### Smart / Dumb Component Pattern
-- **Smart (Container)** — handles data fetching and business logic
-- **Dumb (Presentational)** — receives data via `@Input()` and emits events via `@Output()`
-
-### Project Structure
+The project follows an N-Layer Architecture:
 
 ```
-src/app/
-├── components/
-│   ├── appointments-container/     ← Smart
-│   ├── appointment-list/           ← Dumb
-│   ├── appointment-detail/         ← Smart
-│   ├── appointment-form-container/ ← Smart
-│   ├── appointment-form/           ← Smart (form logic)
-│   ├── doctors-container/          ← Smart
-│   ├── doctor-list/                ← Dumb
-│   ├── doctor-detail/              ← Smart
-│   ├── doctor-form-container/      ← Smart
-│   ├── doctor-form/                ← Smart (form logic)
-│   ├── patient-container/          ← Smart
-│   ├── patient-list/               ← Dumb
-│   ├── patient-detail/             ← Smart
-│   ├── patient-form-container/     ← Smart
-│   ├── patient-form/               ← Smart (form logic)
-│   └── nav-sidebar/                ← Navigation
-├── models/
-│   ├── appointment/
-│   ├── doctor/
-│   └── patient/
-├── services/
-│   ├── appointment/
-│   ├── doctor/
-│   └── patient/
-└── resolvers/
-    └── appointment/
+Controllers → Services → Repositories → Database
 ```
 
-## Key Concepts Used
+- **Controllers** — Handle HTTP requests and responses
+- **Services** — Business logic and validations
+- **Repositories** — Data access layer (Repository Pattern)
+- **DTOs** — Data Transfer Objects for input/output separation
+- **Entities** — EF Core models mapped to database tables
 
-- **Reactive Forms** — `FormBuilder`, `FormGroup`, `Validators`
-- **AsyncPipe** — handling Observables in templates without manual `subscribe`
-- **Route Resolvers** — preloading data before component renders
-- **forkJoin** — parallel HTTP calls
-- **RouterLink / RouterLinkActive** — navigation
-- **`@Input()` / `@Output()` / `EventEmitter`** — component communication
-- **`ngOnChanges`** — reacting to `@Input()` changes
-- **Query Params** — success/delete notifications
+## Features
 
-## Routes
+- Patient CRUD
+- Doctor CRUD
+- Appointment management with overlap validation
+- Appointment status flow (Scheduled → Confirmed → Completed/Cancelled)
+- Soft delete via status change
+- Global exception handling middleware
+- AutoMapper for DTO mapping
+- Unit tests with NUnit and Moq (20+ tests)
+- CI/CD pipeline with GitHub Actions
+- Deployed to Azure App Service
 
-```
-/appointments              → Appointments list
-/appointments/create       → Create appointment
-/appointments/:id          → Appointment detail
-/appointments/:id/edit     → Edit appointment
+## Endpoints
 
-/doctors                   → Doctors list
-/doctors/create            → Create doctor
-/doctors/:id               → Doctor detail
-/doctors/:id/edit          → Edit doctor
+### Appointments
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/appointments | Get all appointments |
+| GET | /api/appointments/{id} | Get appointment by ID |
+| GET | /api/appointments/doctor/{doctorId} | Get appointments by doctor |
+| GET | /api/appointments/patient/{patientId} | Get appointments by patient |
+| POST | /api/appointments | Create appointment |
+| PUT | /api/appointments/{id} | Update appointment |
+| PATCH | /api/appointments/{id}/cancel | Cancel appointment |
+| PATCH | /api/appointments/{id}/confirm | Confirm appointment |
+| PATCH | /api/appointments/{id}/complete | Complete appointment |
+| DELETE | /api/appointments/{id} | Delete appointment |
 
-/patients                  → Patients list
-/patients/create           → Create patient
-/patients/:id              → Patient detail
-/patients/:id/edit         → Edit patient
-```
+### Doctors
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/doctors | Get all doctors |
+| GET | /api/doctors/active | Get active doctors |
+| GET | /api/doctors/{id} | Get doctor by ID |
+| POST | /api/doctors | Create doctor |
+| PUT | /api/doctors/{id} | Update doctor |
+| DELETE | /api/doctors/{id} | Delete doctor |
+
+### Patients
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /api/patients | Get all patients |
+| GET | /api/patients/active | Get active patients |
+| GET | /api/patients/{id} | Get patient by ID |
+| POST | /api/patients | Create patient |
+| PUT | /api/patients/{id} | Update patient |
+| DELETE | /api/patients/{id} | Delete patient |
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js v24+
-- Angular CLI 22
-- [Healthcare REST API](https://github.com/liovadillo/healthcare-api) running locally
+- .NET 8 SDK
+- SQL Server
+- Visual Studio 2022 or VS Code
 
-### Installation
+### Setup
+
+1. Clone the repository
+```bash
+git clone https://github.com/liovadillo/HealthCare_API.git
+```
+
+2. Update the connection string in `appsettings.json`:
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=YOUR_SERVER;Database=HealthCareDB;Trusted_Connection=True;"
+}
+```
+
+3. Run migrations:
+```bash
+dotnet ef database update
+```
+
+4. Run the project:
+```bash
+dotnet run
+```
+
+## Running Tests
 
 ```bash
-git clone https://github.com/liovadillo/healthcare-client-angular.git
-cd healthcare-client-angular
-npm install
+dotnet test
 ```
 
-### Environment Setup
+## Status Flow
 
-Update `src/environments/environment.development.ts` with your API URL:
-
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'https://localhost:7183/api'
-};
+```
+Scheduled → Confirmed → Completed
+Scheduled → Cancelled
+Confirmed → Cancelled
 ```
 
-### Run
+---
 
-```bash
-ng serve
-```
-
-App runs at `http://localhost:4200`
-
-## Related Project
-
-- [Healthcare REST API (.NET)](https://github.com/liovadillo/healthcare-api)
+Ajusta los endpoints que no coincidan exactamente con los tuyos. 👍
