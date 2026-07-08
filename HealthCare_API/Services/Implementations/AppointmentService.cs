@@ -102,6 +102,7 @@ namespace HealthCare_API.Services.Implementations
            _mapper.Map(dto, appointment);
 
             appointment.LastUpdatedDate = DateTime.Now;
+            appointment.Status = AppointmentStatus.Scheduled;
 
             await _repository.UpdateAsync(appointment);
 
