@@ -1,4 +1,5 @@
-﻿using HealthCare_API.Entities;
+﻿using HealthCare_API.DTOs.PaginationDTOs;
+using HealthCare_API.Entities;
 
 namespace HealthCare_API.Repositories.Interfaces
 {
@@ -10,7 +11,6 @@ namespace HealthCare_API.Repositories.Interfaces
         Task<Doctor?> UpdateAsync(Doctor doctor);
         Task DeleteAsync(Doctor doctor);
         Task<IEnumerable<Doctor>> GetAllActiveAsync();
-
-
+        Task<PaginationResponseDTO<Doctor>> GetByPage(int pageNumber, int pageSize);
     }
 }

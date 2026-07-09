@@ -1,4 +1,5 @@
 ﻿using HealthCare_API.Data;
+using HealthCare_API.DTOs.PaginationDTOs;
 using HealthCare_API.Entities;
 using HealthCare_API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,26 @@ namespace HealthCare_API.Repositories.Implementations
         public async Task<Doctor?> GetByIdAsync(int id)
         {
             return await _dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id);                         
+        }
+
+        public async Task<PaginationResponseDTO<Doctor>> GetByPage(int pageNumber, int pageSize)
+        {
+            var totalRecords = await _dbContext.Doctors.CountAsync();
+            var doctors = await _dbContext.Doctors
+                .AsNoTracking()
+                .OrderBy(d => d.Id)
+                .Skip((pageNumber -1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginationResponseDTO<Doctor>
+            {
+                Data = doctors,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double) totalRecords / pageSize),
+                TotalRecords = totalRecords
+            };            
         }
 
         public async Task<Doctor> InsertAsync(Doctor doctor)
