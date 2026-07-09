@@ -1,5 +1,7 @@
 ﻿using HealthCare_API.DTOs.Doctor;
+using HealthCare_API.DTOs.PaginationDTOs;
 using HealthCare_API.DTOs.Patient;
+using HealthCare_API.Entities;
 
 namespace HealthCare_API.Services.Interfaces
 {
@@ -11,5 +13,6 @@ namespace HealthCare_API.Services.Interfaces
         Task<DoctorDTO> InsertAsync(CreateDoctorDTO dto);
         Task<DoctorDTO?> UpdateAsync(int id, UpdateDoctorDTO dto);
         Task<bool> DeleteAsync(int id);
+        Task<PaginationResponseDTO<DoctorDTO>> GetByPage(int pageNumber, int pageSize);
     }
 }
