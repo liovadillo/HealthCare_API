@@ -1,4 +1,5 @@
-﻿using HealthCare_API.DTOs.Patient;
+﻿using HealthCare_API.DTOs.PaginationDTOs;
+using HealthCare_API.DTOs.Patient;
 using HealthCare_API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +17,18 @@ namespace HealthCare_API.Controllers
             _patientService = patientService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<PatientDTO>>> GetAll()
         {
             var patients = await _patientService.GetAllAsync();
             return Ok(patients);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<PaginationResponseDTO<PatientDTO>>> GetByPage([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        {
+            var patientsByPage = await _patientService.GetByPage(pageNumber, pageSize);
+            return Ok(patientsByPage);
         }
 
         [HttpGet("active")]
