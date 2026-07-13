@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using HealthCare_API.DTOs.Doctor;
+using HealthCare_API.DTOs.PaginationDTOs;
 using HealthCare_API.DTOs.Patient;
 using HealthCare_API.Entities;
 using HealthCare_API.Exceptions;
@@ -47,6 +49,28 @@ namespace HealthCare_API.Services.Implementations
             var patient = await GetPatientOrThrowAsync(id);
 
             return _mapper.Map<PatientDTO>(patient);
+        }
+
+        public async Task<PaginationResponseDTO<PatientDTO>> GetByPage(int pageNumber, int pageSize)
+        {
+            if (pageNumber <= 0)
+                throw new BadRequestException("PageNumber must be greater than 0");
+
+            if (pageSize <= 0)
+                throw new BadRequestException("PageSize must be greater than 0");
+
+            var paginationPatients = await _repository.GetByPage(pageNumber, pageSize);
+            var patientsDTO = _mapper.Map<IEnumerable<PatientDTO>>(paginationPatients.Data);
+
+            return new PaginationResponseDTO<PatientDTO>
+            {
+                Data = patientsDTO,
+                PageNumber = paginationPatients.PageNumber,
+                PageSize = paginationPatients.PageSize,
+                TotalPages = paginationPatients.TotalPages,
+                TotalRecords = paginationPatients.TotalRecords
+            };
+            
         }
 
         public async Task<PatientDTO> InsertAsync(CreatePatientDTO dto)

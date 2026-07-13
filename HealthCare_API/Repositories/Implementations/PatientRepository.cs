@@ -1,4 +1,5 @@
 ﻿using HealthCare_API.Data;
+using HealthCare_API.DTOs.PaginationDTOs;
 using HealthCare_API.Entities;
 using HealthCare_API.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,26 @@ namespace HealthCare_API.Repositories.Implementations
         public async Task<IEnumerable<Patient>> GetAllActiveAsync()
         {
             return await _context.Patients.Where(p => p.IsActive).ToListAsync();            
+        }
+
+        public async Task<PaginationResponseDTO<Patient>> GetByPage(int pageNumber, int pageSize)
+        {
+            var totalRecords = await _context.Patients.CountAsync();
+            var patients = await _context.Patients
+                .AsNoTracking()
+                .OrderBy(p => p.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginationResponseDTO<Patient>
+            {
+                Data = patients,
+                TotalRecords = totalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)totalRecords / pageSize)
+            };
         }
     }
 }
