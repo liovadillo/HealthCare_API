@@ -1,4 +1,5 @@
-﻿using HealthCare_API.Entities;
+﻿using HealthCare_API.DTOs.PaginationDTOs;
+using HealthCare_API.Entities;
 using System.Linq.Expressions;
 
 namespace HealthCare_API.Repositories.Interfaces
@@ -13,6 +14,7 @@ namespace HealthCare_API.Repositories.Interfaces
         Task<Appointment> UpdateAsync(Appointment appointment);
         Task DeleteAsync(Appointment appointment);
         Task<bool> ExistAsync(Expression<Func<Appointment, bool>> predicate);
+        Task<PaginationResponseDTO<Appointment>> GetByPage(int pageNumber, int pageSize);
 
 
     }

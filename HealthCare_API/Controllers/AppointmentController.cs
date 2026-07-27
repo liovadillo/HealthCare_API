@@ -1,4 +1,6 @@
 ﻿using HealthCare_API.DTOs.Appointment;
+using HealthCare_API.DTOs.PaginationDTOs;
+using HealthCare_API.Services.Implementations;
 using HealthCare_API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -36,6 +38,13 @@ namespace HealthCare_API.Controllers
         }
 
         [HttpGet]
+        public async Task<ActionResult<PaginationResponseDTO<AppointmentDTO>>> GetByPage([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10) { 
+            var appointmentsByPage = await _appointmentService.GetByPage(pageNumber, pageSize);
+            return Ok(appointmentsByPage);
+            
+        }
+
+        [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<AppointmentDTO>>> GetAll()
         {
             var appointments = await _appointmentService.GetAllAsync();
