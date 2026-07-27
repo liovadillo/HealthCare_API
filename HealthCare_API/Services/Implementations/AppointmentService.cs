@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using HealthCare_API.DTOs.Appointment;
+using HealthCare_API.DTOs.Doctor;
+using HealthCare_API.DTOs.PaginationDTOs;
 using HealthCare_API.Entities;
 using HealthCare_API.Enums;
 using HealthCare_API.Exceptions;
@@ -185,7 +187,24 @@ namespace HealthCare_API.Services.Implementations
 
         }
 
+        public async Task<PaginationResponseDTO<AppointmentDTO>> GetByPage(int pageNumber, int pageSize)
+        {
+            if (pageNumber <= 0)
+                throw new BadRequestException("PageNumber must be greater than 0");
 
+            if (pageSize <= 0)
+                throw new BadRequestException("PageSize must be greater than 0");
 
+            var paginationAppointments = await _repository.GetByPage(pageNumber, pageSize);
+            var appointmentsDTO = _mapper.Map<IEnumerable<AppointmentDTO>>(paginationAppointments.Data);
+
+            return new PaginationResponseDTO<AppointmentDTO> { 
+                Data = appointmentsDTO,
+                PageNumber = paginationAppointments.PageNumber,
+                PageSize = paginationAppointments.PageSize,
+                TotalPages = paginationAppointments.TotalPages,
+                TotalRecords = paginationAppointments.TotalRecords
+            };            
+        }
     }
 }
